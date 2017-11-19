@@ -4,14 +4,23 @@ window.onload = function()
 	{	
 		this.stage = 0
 		this.bpmList = [60, 80, 100]
+		this.tonaList = [['C','Dm','Em','F','G','Am','Bdim'],['G','Am','Bm','C','D','Em','F#dim']]
+		this.animationEnd = false
 		this.startGame = function()
 		{
+			game.tona = game.tonaList[game.stage]
 			game.bpm = game.bpmList[game.stage]
 			$('#buttons').fadeOut(1000,function()
 			{
 				$('#buttons').html('')
+				const bip = document.querySelector('audio')
+				bip.volume = 0.3
 				const text = document.createElement('p')
-				let temps = 1
+				const chord = document.createElement('p')
+				const nextchord = document.createElement('p')
+				let temps = 4
+				let random = 0
+				var animationEnd = false
 				text.textContent = temps
 				text.id = 'temps'
 				text.style.position = 'absolute'
@@ -20,17 +29,52 @@ window.onload = function()
 				text.style.transform = 'translate(-50%,-50%)'
 				text.style.fontSize = '50px'
 				text.style.color = '#fff'
+				text.style.cursor = 'default'
+				text.style.userSelect = 'none'
 				$('#buttons').append(text)
+				
+				chord.style.position = 'absolute'
+				chord.style.left = '50%'
+				chord.style.top = '50%'
+				chord.style.transform = 'translate(-50%,-50%)'
+				chord.style.fontSize = '70px'
+				chord.style.color = '#fff'
+				chord.style.cursor = 'default'
+				chord.style.userSelect = 'none'
+				$('#buttons').append(chord)
+				
+				nextchord.style.position = 'absolute'
+				nextchord.style.left = '0%'
+				nextchord.style.top = '50%'
+				nextchord.style.transform = 'translate(-50%,-50%)'
+				nextchord.style.fontSize = '35px'
+				nextchord.style.color = '#fff'
+				nextchord.style.cursor = 'default'
+				nextchord.style.userSelect = 'none'
+				$('#buttons').append(nextchord)
+				
 				setInterval(function()
 				{
+					bip.play()
 					temps++
 					if(temps > 4)
+					{
 						temps = 1
+						if(game.animationEnd)
+						{
+							chord.textContent = game.tona[random]
+							random = Math.floor(Math.random() * 7)
+							nextchord.textContent = game.tona[random]
+						}
+					}
 					text.textContent = temps
 				}, 60000/game.bpm)
 			}).fadeIn(5000, function()
 			{
-				$('#temps').animate({left: 0, top: '100%'}, 5000)
+				$('#temps').animate({left: 0, top: '100%'}, 5000, function()
+				{
+					game.animationEnd	= true
+				})
 			})
 		}
 		
@@ -72,7 +116,7 @@ window.onload = function()
 		this.btnPlay.style.height = '50px'
 		this.btnPlay.textContent = 'Jouer'
 		this.btnPlay.style.fontSize = '25px'
-		this.btnPlay.className = 'btn btn-warning'
+		this.btnPlay.className = 'btn btn-success'
 		this.btnPlay.style.display = 'block'
 		this.btnPlay.style.margin = '50px auto'
 		this.btnPlay.style.cursor = 'default'
