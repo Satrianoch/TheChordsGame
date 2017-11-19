@@ -63,7 +63,12 @@ window.onload = function()
 						if(game.animationEnd)
 						{
 							chord.textContent = game.tona[random]
-							random = Math.floor(Math.random() * 7)
+							const randomMemorize = random
+							do
+							{
+								random = Math.floor(Math.random() * 7)
+							}
+							while(randomMemorize == random)
 							nextchord.textContent = game.tona[random]
 						}
 					}
