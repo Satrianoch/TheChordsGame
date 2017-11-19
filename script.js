@@ -3,7 +3,7 @@ window.onload = function()
 	function chordsGame(width, height)
 	{	
 		this.stage = 0
-		this.bpmList = [60, 80, 100]
+		this.bpmList = [60, 80]
 		this.tonaList = [['C','Dm','Em','F','G','Am','Bdim'],['G','Am','Bm','C','D','Em','F#dim']]
 		this.animationEnd = false
 		this.startGame = function()
@@ -14,13 +14,13 @@ window.onload = function()
 			{
 				$('#buttons').html('')
 				const bip = document.querySelector('audio')
+				const backgroundList = document.getElementsByClassName(game.stage)
 				bip.volume = 0.3
 				const text = document.createElement('p')
 				const chord = document.createElement('p')
 				const nextchord = document.createElement('p')
 				let temps = 4
 				let random = 0
-				var animationEnd = false
 				text.textContent = temps
 				text.id = 'temps'
 				text.style.position = 'absolute'
@@ -62,6 +62,7 @@ window.onload = function()
 						temps = 1
 						if(game.animationEnd)
 						{
+							backgroundList[random].play()
 							chord.textContent = game.tona[random]
 							const randomMemorize = random
 							do
@@ -76,7 +77,7 @@ window.onload = function()
 				}, 60000/game.bpm)
 			}).fadeIn(5000, function()
 			{
-				$('#temps').animate({left: 0, top: '100%'}, 5000, function()
+				$('#temps').animate({left: 0, top: '100%'}, 2500, function()
 				{
 					game.animationEnd	= true
 				})
