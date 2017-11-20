@@ -92,55 +92,68 @@ window.onload = function()
 			$('#buttons').fadeOut(1000, function()
 			{
 				$('#buttons').html('')
-				const btnDifficulty = document.createElement('select')
+				const btnDifficulty = document.createElement('div')
 				btnDifficulty.id = 'difficulty'
 				btnDifficulty.style.width = '150px'
 				btnDifficulty.style.height = '50px'
 				btnDifficulty.style.fontSize = '25px'
-				btnDifficulty.classList.add('btn-warning', 'selectpicker')
-				btnDifficulty.style.color = '#fff'
-				btnDifficulty.textContent = 'Difficulté'
 				btnDifficulty.style.display = 'block'
-				btnDifficulty.style.borderRadius = '5px'
 				btnDifficulty.style.margin = '50px auto'
 				btnDifficulty.style.cursor = 'default'
-			
-				const btnDifficultyTitle = document.createElement('option')
-				btnDifficultyTitle.textContent = 'Difficulté'
-				btnDifficultyTitle.value = game.stage
-				btnDifficulty.appendChild(btnDifficultyTitle)
-				const debutant = document.createElement('option')
-				debutant.textContent = 'Débutant'
-				debutant.value = 0
-				btnDifficulty.appendChild(debutant)
-				const amateur = document.createElement('option')
-				amateur.textContent = 'Amateur'
-				amateur.value = 1
-				btnDifficulty.appendChild(amateur)
-				const intermediaire = document.createElement('option')
-				intermediaire.textContent = 'Intermédiaire'
-				intermediaire.value = 2
-				btnDifficulty.appendChild(intermediaire)
-				const professionnel = document.createElement('option')
-				professionnel.textContent = 'Professionnel'
-				professionnel.value = 3
-				btnDifficulty.appendChild(professionnel)
-				const god = document.createElement('option')
-				god.textContent = 'Dieu vivant'
-				god.value = 4
-				btnDifficulty.appendChild(god)
-
-
+				
+				switchDifficulty(game.stage)
+				
+				btnDifficulty.addEventListener('click', function()
+				{
+					switchDifficulty(btnDifficulty.textContent)
+				})
+				function switchDifficulty(toSwitch)
+				{
+					switch(toSwitch)
+					{
+						case 'Débutant':
+						case 1:
+							btnDifficulty.textContent = 'Amateur'
+							btnDifficulty.className = 'btn btn-primary'
+							btnDifficulty.value = 1
+							break
+						case 'Amateur':
+						case 2:
+							btnDifficulty.textContent = 'Intermédiaire'
+							btnDifficulty.className = 'btn btn-warning'
+							btnDifficulty.value = 2
+							break
+						case 'Intermédiaire':
+						case 3:
+							btnDifficulty.textContent = 'Pro'
+							btnDifficulty.className = 'btn btn-danger'
+							btnDifficulty.value = 3
+							break
+						case 'Pro':
+						case 4:
+							btnDifficulty.textContent = 'Dieu vivant'
+							btnDifficulty.className = 'btn btn-default'
+							btnDifficulty.value = 4
+							break
+						default:
+							btnDifficulty.textContent = 'Débutant'
+							btnDifficulty.className = 'btn btn-info'
+							btnDifficulty.value = 0
+					}
+				}
 				const btnMetronome = document.createElement('div')
 				btnMetronome.id = 'btnMetronome'
 				btnMetronome.style.width = '150px'
 				btnMetronome.style.height = '50px'
 				btnMetronome.textContent = 'Metronome'
 				btnMetronome.style.fontSize = '25px'
-				btnMetronome.className = 'btn btn-success'
 				btnMetronome.style.display = 'block'
 				btnMetronome.style.margin = '50px auto'
 				btnMetronome.style.cursor = 'default'
+				if(game.metronome)
+					btnMetronome.className = 'btn btn-success'
+				else
+					btnMetronome.className = 'btn btn-default'
 				btnMetronome.addEventListener('click', function()
 				{
 					$('#btnMetronome').toggleClass('btn-default').toggleClass('btn-success')
