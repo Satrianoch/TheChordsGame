@@ -3,9 +3,11 @@ window.onload = function()
 	function chordsGame(width, height)
 	{	
 		this.stage = 0
-		this.bpmList = [60, 80]
+		this.bpmList = [60, 70]
 		this.tonaList = [['C','Dm','Em','F','G','Am','Bdim'],['G','Am','Bm','C','D','Em','F#dim']]
+		this.metronome = true
 		this.animationEnd = false
+		
 		this.startGame = function()
 		{
 			game.tona = game.tonaList[game.stage]
@@ -16,22 +18,22 @@ window.onload = function()
 				const bip = document.querySelector('audio')
 				const backgroundList = document.getElementsByClassName(game.stage)
 				bip.volume = 0.3
-				const text = document.createElement('p')
+				const chrono = document.createElement('p')
 				const chord = document.createElement('p')
 				const nextchord = document.createElement('p')
 				let temps = 4
 				let random = 0
-				text.textContent = temps
-				text.id = 'temps'
-				text.style.position = 'absolute'
-				text.style.left = '50%'
-				text.style.top = '50%'
-				text.style.transform = 'translate(-50%,-50%)'
-				text.style.fontSize = '50px'
-				text.style.color = '#fff'
-				text.style.cursor = 'default'
-				text.style.userSelect = 'none'
-				$('#buttons').append(text)
+				chrono.textContent = temps
+				chrono.id = 'temps'
+				chrono.style.position = 'absolute'
+				chrono.style.left = '50%'
+				chrono.style.top = '50%'
+				chrono.style.transform = 'translate(-50%,-50%)'
+				chrono.style.fontSize = '50px'
+				chrono.style.color = '#fff'
+				chrono.style.cursor = 'default'
+				chrono.style.userSelect = 'none'
+				$('#buttons').append(chrono)
 				
 				chord.style.position = 'absolute'
 				chord.style.left = '50%'
@@ -55,7 +57,8 @@ window.onload = function()
 				
 				setInterval(function()
 				{
-					bip.play()
+					if(game.metronome || (!game.metronome && !game.animationEnd))
+						bip.play()
 					temps++
 					if(temps > 4)
 					{
@@ -73,7 +76,7 @@ window.onload = function()
 							nextchord.textContent = game.tona[random]
 						}
 					}
-					text.textContent = temps
+					chrono.textContent = temps
 				}, 60000/game.bpm)
 			}).fadeIn(5000, function()
 			{
@@ -86,82 +89,173 @@ window.onload = function()
 		
 		this.setOptions = function()
 		{
-			$('#buttons').fadeOut(1000).fadeIn(5000)
+			$('#buttons').fadeOut(1000, function()
+			{
+				$('#buttons').html('')
+				const btnDifficulty = document.createElement('select')
+				btnDifficulty.id = 'difficulty'
+				btnDifficulty.style.width = '150px'
+				btnDifficulty.style.height = '50px'
+				btnDifficulty.style.fontSize = '25px'
+				btnDifficulty.classList.add('btn-warning', 'selectpicker')
+				btnDifficulty.style.color = '#fff'
+				btnDifficulty.textContent = 'Difficulté'
+				btnDifficulty.style.display = 'block'
+				btnDifficulty.style.borderRadius = '5px'
+				btnDifficulty.style.margin = '50px auto'
+				btnDifficulty.style.cursor = 'default'
+			
+				const btnDifficultyTitle = document.createElement('option')
+				btnDifficultyTitle.textContent = 'Difficulté'
+				btnDifficultyTitle.value = game.stage
+				btnDifficulty.appendChild(btnDifficultyTitle)
+				const debutant = document.createElement('option')
+				debutant.textContent = 'Débutant'
+				debutant.value = 0
+				btnDifficulty.appendChild(debutant)
+				const amateur = document.createElement('option')
+				amateur.textContent = 'Amateur'
+				amateur.value = 1
+				btnDifficulty.appendChild(amateur)
+				const intermediaire = document.createElement('option')
+				intermediaire.textContent = 'Intermédiaire'
+				intermediaire.value = 2
+				btnDifficulty.appendChild(intermediaire)
+				const professionnel = document.createElement('option')
+				professionnel.textContent = 'Professionnel'
+				professionnel.value = 3
+				btnDifficulty.appendChild(professionnel)
+				const god = document.createElement('option')
+				god.textContent = 'Dieu vivant'
+				god.value = 4
+				btnDifficulty.appendChild(god)
+
+
+				const btnMetronome = document.createElement('div')
+				btnMetronome.id = 'btnMetronome'
+				btnMetronome.style.width = '150px'
+				btnMetronome.style.height = '50px'
+				btnMetronome.textContent = 'Metronome'
+				btnMetronome.style.fontSize = '25px'
+				btnMetronome.className = 'btn btn-success'
+				btnMetronome.style.display = 'block'
+				btnMetronome.style.margin = '50px auto'
+				btnMetronome.style.cursor = 'default'
+				btnMetronome.addEventListener('click', function()
+				{
+					$('#btnMetronome').toggleClass('btn-default').toggleClass('btn-success')
+					if(game.metronome)
+						game.metronome = false
+					else
+						game.metronome = true
+				})
+
+				const btnBack = document.createElement('div')
+				btnBack.style.width = '150px'
+				btnBack.style.height = '50px'
+				btnBack.textContent = 'Retour'
+				btnBack.style.fontSize = '25px'
+				btnBack.className = 'btn btn-danger'
+				btnBack.style.display = 'block'
+				btnBack.style.margin = 'auto'
+				btnBack.style.cursor = 'default'
+				btnBack.addEventListener('click', function()
+				{
+					$('#buttons').fadeOut(1000, function()
+					{
+						const difficultySelected = $('#difficulty').val()
+						game.stage = difficultySelected
+						$('#menu').remove()
+						game.mainMenu()
+						$('#buttons').hide()
+						$('#buttons').fadeIn(1000)
+					})
+				})
+
+				game.buttons.appendChild(btnDifficulty)
+				game.buttons.appendChild(btnMetronome)
+				game.buttons.appendChild(btnBack)
+			}).fadeIn(1000)
 		}
 		
-		this.menu = document.createElement('div')
-		this.menu.id = 'menu'
-		this.menu.style.width = width + 'px'
-		this.menu.style.height = height + 'px'
-		this.menu.style.background = '#000'
-		this.menu.style.margin = 'auto'
-		this.menu.style.position = 'absolute'
-		this.menu.style.top = '50%'
-		this.menu.style.left = '50%'
-		this.menu.style.transform = 'translate(-50%,-50%)'
-		
-		this.title = document.createElement('p')
-		this.title.textContent = 'The Chords Game'
-		this.title.style.fontSize = '66px'
-		this.title.style.color = '#fff'
-		this.title.style.textAlign = 'center'
-		this.title.style.cursor = 'default'
-		this.title.style.userSelect = 'none'
-		
-		this.buttons = document.createElement('div')
-		this.buttons.id = 'buttons'
-		this.buttons.style.width = (width/2) + 'px'
-		this.buttons.style.height = (height/2) + 'px'
-		this.buttons.style.position = 'absolute'
-		this.buttons.style.left = '50%'
-		this.buttons.style.top = '50%'
-		this.buttons.style.transform = 'translate(-50%,-50%)'
-		
-		this.btnPlay = document.createElement('div')
-		this.btnPlay.style.width = '150px'
-		this.btnPlay.style.height = '50px'
-		this.btnPlay.textContent = 'Jouer'
-		this.btnPlay.style.fontSize = '25px'
-		this.btnPlay.className = 'btn btn-success'
-		this.btnPlay.style.display = 'block'
-		this.btnPlay.style.margin = '50px auto'
-		this.btnPlay.style.cursor = 'default'
-		this.btnPlay.addEventListener('click', this.startGame)
-		
-		this.btnOptions = document.createElement('div')
-		this.btnOptions.style.width = '150px'
-		this.btnOptions.style.height = '50px'
-		this.btnOptions.textContent = 'Options'
-		this.btnOptions.style.fontSize = '25px'
-		this.btnOptions.className = 'btn btn-primary'
-		this.btnOptions.style.display = 'block'
-		this.btnOptions.style.margin = '50px auto'
-		this.btnOptions.style.cursor = 'default'
-		this.btnOptions.addEventListener('click', this.setOptions)
-		
-		this.btnExit = document.createElement('div')
-		this.btnExit.style.width = '150px'
-		this.btnExit.style.height = '50px'
-		this.btnExit.textContent = 'Quitter'
-		this.btnExit.style.fontSize = '25px'
-		this.btnExit.className = 'btn btn-danger'
-		this.btnExit.style.display = 'block'
-		this.btnExit.style.margin = 'auto'
-		this.btnExit.style.cursor = 'default'
-		this.btnExit.addEventListener('click', function()
+		this.mainMenu = function()
 		{
-				window.location.href = 'http://google.com'
-		})
+			this.menu = document.createElement('div')
+			this.menu.id = 'menu'
+			this.menu.style.width = width + 'px'
+			this.menu.style.height = height + 'px'
+			this.menu.style.background = '#000'
+			this.menu.style.margin = 'auto'
+			this.menu.style.position = 'absolute'
+			this.menu.style.top = '50%'
+			this.menu.style.left = '50%'
+			this.menu.style.transform = 'translate(-50%,-50%)'
+
+			this.title = document.createElement('p')
+			this.title.textContent = 'The Chords Game'
+			this.title.style.fontSize = '66px'
+			this.title.style.color = '#fff'
+			this.title.style.textAlign = 'center'
+			this.title.style.cursor = 'default'
+			this.title.style.userSelect = 'none'
+
+			this.buttons = document.createElement('div')
+			this.buttons.id = 'buttons'
+			this.buttons.style.width = (width/2) + 'px'
+			this.buttons.style.height = (height/2) + 'px'
+			this.buttons.style.position = 'absolute'
+			this.buttons.style.left = '50%'
+			this.buttons.style.top = '50%'
+			this.buttons.style.transform = 'translate(-50%,-50%)'
+			
+			this.btnPlay = document.createElement('div')
+			this.btnPlay.style.width = '150px'
+			this.btnPlay.style.height = '50px'
+			this.btnPlay.textContent = 'Jouer'
+			this.btnPlay.style.fontSize = '25px'
+			this.btnPlay.className = 'btn btn-success'
+			this.btnPlay.style.display = 'block'
+			this.btnPlay.style.margin = '50px auto'
+			this.btnPlay.style.cursor = 'default'
+			this.btnPlay.addEventListener('click', this.startGame)
+
+			this.btnOptions = document.createElement('div')
+			this.btnOptions.style.width = '150px'
+			this.btnOptions.style.height = '50px'
+			this.btnOptions.textContent = 'Options'
+			this.btnOptions.style.fontSize = '25px'
+			this.btnOptions.className = 'btn btn-primary'
+			this.btnOptions.style.display = 'block'
+			this.btnOptions.style.margin = '50px auto'
+			this.btnOptions.style.cursor = 'default'
+			this.btnOptions.addEventListener('click', this.setOptions)
+
+			this.btnExit = document.createElement('div')
+			this.btnExit.style.width = '150px'
+			this.btnExit.style.height = '50px'
+			this.btnExit.textContent = 'Quitter'
+			this.btnExit.style.fontSize = '25px'
+			this.btnExit.className = 'btn btn-danger'
+			this.btnExit.style.display = 'block'
+			this.btnExit.style.margin = 'auto'
+			this.btnExit.style.cursor = 'default'
+			this.btnExit.addEventListener('click', function()
+			{
+					window.location.href = 'http://google.com'
+			})
+
+			this.buttons.appendChild(this.btnPlay)
+			this.buttons.appendChild(this.btnOptions)
+			this.buttons.appendChild(this.btnExit)
+			this.menu.appendChild(this.title)
+			this.menu.appendChild(this.buttons)
+			document.body.style.background = '#000'
+			document.body.style.fontFamily = 'Indie Flower, cursive'
+			document.body.appendChild(this.menu)
+		}
 		
-		this.buttons.appendChild(this.btnPlay)
-		this.buttons.appendChild(this.btnOptions)
-		this.buttons.appendChild(this.btnExit)
-		this.menu.appendChild(this.title)
-		this.menu.appendChild(this.buttons)
-		document.body.style.background = '#000'
-		document.body.style.fontFamily = 'Indie Flower, cursive'
-		document.body.appendChild(this.menu)
 	}
 	
 	const game = new chordsGame(800, 700)
+	game.mainMenu()
 }
