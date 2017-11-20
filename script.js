@@ -3,8 +3,9 @@ window.onload = function()
 	function chordsGame(width, height)
 	{	
 		this.stage = 0
-		this.bpmList = [60, 70]
-		this.tonaList = [['C','Dm','Em','F','G','Am','Bdim'],['G','Am','Bm','C','D','Em','F#dim']]
+		this.bpmList = [60, 70, 70, 100, 120]
+		this.tonaList = [['C','Dm','Em','F','G','Am','Bdim'],['G','Am','Bm','C','D','Em','F#dim'], ['C7M','Dm7','Em7','F7M','G7','Am7','B°7'], ['F7M','Gm7','Am7','Bb7M','C7','Dm7','E°7'],
+										['C7Madd9','Dm7add9','E7sus4','G75#','C#7add9','Am7add9','F7M11#']]
 		this.metronome = true
 		this.animationEnd = false
 		
@@ -21,7 +22,7 @@ window.onload = function()
 				const chrono = document.createElement('p')
 				const chord = document.createElement('p')
 				const nextchord = document.createElement('p')
-				let temps = 4
+				let temps = 0
 				let random = 0
 				chrono.textContent = temps
 				chrono.id = 'temps'
@@ -37,7 +38,7 @@ window.onload = function()
 				
 				chord.style.position = 'absolute'
 				chord.style.left = '50%'
-				chord.style.top = '50%'
+				chord.style.top = '40%'
 				chord.style.transform = 'translate(-50%,-50%)'
 				chord.style.fontSize = '70px'
 				chord.style.color = '#fff'
@@ -47,7 +48,7 @@ window.onload = function()
 				
 				nextchord.style.position = 'absolute'
 				nextchord.style.left = '0%'
-				nextchord.style.top = '50%'
+				nextchord.style.top = '40%'
 				nextchord.style.transform = 'translate(-50%,-50%)'
 				nextchord.style.fontSize = '35px'
 				nextchord.style.color = '#fff'
@@ -65,7 +66,8 @@ window.onload = function()
 						temps = 1
 						if(game.animationEnd)
 						{
-							backgroundList[random].play()
+							if(backgroundList[random])
+								backgroundList[random].play()
 							chord.textContent = game.tona[random]
 							const randomMemorize = random
 							do
@@ -78,7 +80,7 @@ window.onload = function()
 					}
 					chrono.textContent = temps
 				}, 60000/game.bpm)
-			}).fadeIn(5000, function()
+			}).fadeIn(5000 - (500*game.stage), function()
 			{
 				$('#temps').animate({left: 0, top: '100%'}, 2500, function()
 				{
@@ -107,9 +109,9 @@ window.onload = function()
 				{
 					switchDifficulty(btnDifficulty.textContent)
 				})
-				function switchDifficulty(toSwitch)
+				function switchDifficulty(level)
 				{
-					switch(toSwitch)
+					switch(level)
 					{
 						case 'Débutant':
 						case 1:
@@ -230,7 +232,7 @@ window.onload = function()
 			this.btnPlay.style.display = 'block'
 			this.btnPlay.style.margin = '50px auto'
 			this.btnPlay.style.cursor = 'default'
-			this.btnPlay.addEventListener('click', this.startGame)
+			$(this.btnPlay).one('click', this.startGame)
 
 			this.btnOptions = document.createElement('div')
 			this.btnOptions.style.width = '150px'
@@ -241,7 +243,7 @@ window.onload = function()
 			this.btnOptions.style.display = 'block'
 			this.btnOptions.style.margin = '50px auto'
 			this.btnOptions.style.cursor = 'default'
-			this.btnOptions.addEventListener('click', this.setOptions)
+			$(this.btnOptions).one('click', this.setOptions)
 
 			this.btnExit = document.createElement('div')
 			this.btnExit.style.width = '150px'
